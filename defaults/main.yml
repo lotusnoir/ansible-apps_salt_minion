@@ -1,0 +1,20 @@
+---
+salt_minion_force_install: false
+
+salt_master_ip: 10.1.200.23
+salt_master_update_keys: false
+
+salt_minion_config: |
+  master:
+    - {{ salt_master_ip }}
+  id: {{ ansible_hostname }}
+
+#  proxy_host: {{ http_proxy_host }}
+#  proxy_port: {{ http_proxy_port }}
+#  no_proxy: [localhost, 127.0.0.1, {{ ansible_default_ipv4.interface }}]
+#
+#  random_reauth_delay: 270
+#  recon_default: 1000
+#  recon_max: 59000
+#  recon_randomize: True
+#  auth_timeout: 30

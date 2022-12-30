@@ -1,0 +1,59 @@
+---
+- name: "Ensure salt minion exist"
+  ansible.builtin.stat:
+    path: "{{ salt_minion_exe }}"
+  register: minion_bin
+
+- name: "Install saltstack minion"
+  when: salt_minion_force_install|bool or not minion_bin.stat.exists
+  block:
+    - name: "Download last install script"
+      ansible.builtin.get_url:
+        url: "{{ salt_minion_bootstrap_url }}"
+        dest: "/tmp/salt-minion_install.sh"
+        timeout: 120
+        mode: 0755
+
+    - name: "Master | Delete existing keys"
+      ansible.builtin.command: "salt-key -d {{ ansible_hostname }} -y"
+      changed_when: false
+      delegate_to: "{{ salt_master_ip }}"
+      when: salt_master_update_keys|bool
+
+    - name: "Run salt minion install script"
+      ansible.builtin.command: "/tmp/salt-minion_install.sh"
+      changed_when: false
+
+- name: "Link minion_id to hostname"
+  ansible.builtin.file:
+    src: "/etc/hostname"
+    dest: "/etc/salt/minion_id"
+    owner: root
+    group: root
+    state: link
+    force: true
+  notify: restart salt-minion
+
+- name: "Configure minion"
+  ansible.builtin.copy:
+    dest: "/etc/salt/minion"
+    content: "{{ salt_minion_config }}"
+    mode: 0644
+  notify: restart salt-minion
+
+- name: "Ask Salt-master to acept minion key"
+  ansible.builtin.command: "salt-key -a {{ ansible_hostname }} -y"
+  changed_when: false
+  delegate_to: "{{ salt_master_ip }}"
+  when: salt_master_update_keys|bool
+
+#- name: "Ask Salt-master to acept minion key"
+#  ansible.builtin.command: 'salt-call event.fire { "minion_id" : "nom_vm" } custom/salt/master/add-minion'
+#  changed_when: false
+#  when: salt_master_update_keys|bool
+
+- name: "Start and enable salt minion"
+  ansible.builtin.service:
+    name: "salt-minion"
+    state: "started"
+    enabled: "yes"
