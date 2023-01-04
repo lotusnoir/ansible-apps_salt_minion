@@ -40,6 +40,7 @@
     content: "{{ salt_minion_config }}"
     mode: 0644
   notify: restart salt-minion
+  when: salt_minion_confighost|bool
 
 - name: "Ask Salt-master to acept minion key"
   ansible.builtin.command: "salt-key -a {{ ansible_hostname }} -y"
