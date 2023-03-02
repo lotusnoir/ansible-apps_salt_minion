@@ -9,3 +9,7 @@
 
   vars:
     salt_master_update_keys: false
+    salt_minion_config: |
+      master:
+        - localhost
+      id: test
