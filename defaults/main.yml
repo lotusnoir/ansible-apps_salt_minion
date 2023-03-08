@@ -1,11 +1,11 @@
 ---
 ## Install
 salt_minion_force_install: false
-salt_master_ip: 10.1.200.23
+salt_master_ip: 10.1.2.3
 salt_master_update_keys: false
 
 ## Config
-salt_minion_confighost: true
+salt_minion_confighost: false
 salt_minion_config: |
   master: {{ salt_master_ip }}
   id: {{ ansible_hostname }}

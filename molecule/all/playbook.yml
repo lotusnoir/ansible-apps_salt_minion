@@ -1,0 +1,15 @@
+---
+- name: Run role
+  hosts: all
+  become: true
+  any_errors_fatal: true
+
+  roles:
+    - role: ansible-apps_salt_minion
+
+  vars:
+    salt_master_update_keys: false
+    salt_minion_config: |
+      master:
+        - localhost
+      id: test
