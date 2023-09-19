@@ -1,6 +1,28 @@
 ---
 ## Install
+salt_minion_install_method: repo #bootstrap | repo | src (nopt working yet)
 salt_minion_force_install: false
+# Used for boostrap and src. repo install latest
+salt_minion_version: "3006.1"
+
+## install src
+salt_minion_packages:
+  - apt-transport-https
+  - ca-certificates
+  - python3-jinja2
+  - python3-markupsafe
+  - python3-distro
+  - python3-jmespath
+  - python3-msgpack
+  - python3-packaging
+  - python3-psutil
+  - python3-requests
+
+salt_minion_tgz: "salt-{{ salt_minion_version }}.tar.gz"
+salt_minion_tgz_url: "https://github.com/saltstack/salt/releases/download/v{{ salt_minion_version }}/{{ salt_minion_tgz }}"
+salt_minion_temp_dir: /tmp
+
+# Install with master interaction
 salt_master_ip: 10.1.2.3
 salt_master_update_keys: false
 

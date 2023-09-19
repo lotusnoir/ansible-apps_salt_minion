@@ -1,0 +1,41 @@
+---
+### Debian
+- name: "DEBIAN | Install repo"
+  when: ansible_os_family == 'Debian'
+  block:
+    - name: "DEBIAN | Download gpg key"
+      ansible.builtin.get_url:
+        url: "https://repo.saltproject.io/salt/py3/{{ ansible_distribution | lower }}/{{ salt_minion_repo_version }}/amd64/{{ salt_minion_repo_key }}"
+        dest: /usr/share/keyrings/salt-archive-keyring.gpg
+        mode: '0644'
+
+    - name: "DEBIAN | Create repo list"
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/salt-archive-keyring.gpg] https://repo.saltproject.io/salt/py3/{{ ansible_distribution | lower }}/{{ salt_minion_repo_version }}/amd64/latest {{ salt_minion_repo_dist }} main"
+        state: present
+        filename: salt
+
+    - name: "DEBIAN | Install minion"
+      ansible.builtin.apt:
+        name: "salt-minion"
+        update_cache: true
+
+### Redhat
+- name: "REDHAT | Install repo"
+  when: ansible_os_family == 'RedHat'
+  block:
+    - name: "REDHAT | Download gpg key"
+      ansible.builtin.rpm_key:
+        key: "https://repo.saltproject.io/salt/py3/redhat/{{ ansible_distribution_major_version }}/x86_64/SALT-PROJECT-GPG-PUBKEY-2023.pub"
+        state: present
+
+    - name: "REDHAT | Add repository"
+      ansible.builtin.yum_repository:
+        name: salt
+        description: Salt repo
+        baseurl: "https://repo.saltproject.io/salt/py3/redhat/{{ ansible_distribution_major_version }}/x86_64/latest"
+
+    - name: "REDHAT | Install minion"
+      ansible.builtin.yum:
+        name: "salt-minion"
+        state: present
