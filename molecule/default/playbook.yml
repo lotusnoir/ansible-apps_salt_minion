@@ -4,14 +4,14 @@
   become: true
   any_errors_fatal: true
 
-  tasks:
-    - name: Include role
-      ansible.builtin.include_role:
-        name: ansible-apps_salt_minion
-
   vars:
     salt_master_update_keys: false
     salt_minion_config: |
       master:
         - localhost
       id: test
+
+  tasks:
+    - name: Include role
+      ansible.builtin.include_role:
+        name: ansible-apps_salt_minion
