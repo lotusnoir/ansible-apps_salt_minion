@@ -17,7 +17,7 @@
 
     - name: "DEBIAN | Install minion"
       ansible.builtin.apt:
-        name: "salt-minion"
+        name: "{{ salt_minion_pkg_name }}"
         update_cache: true
 
 ### Redhat
@@ -37,5 +37,5 @@
 
     - name: "REDHAT | Install minion"
       ansible.builtin.yum:
-        name: "salt-minion"
+        name: "{{ salt_minion_pkg_name }}"
         state: present
