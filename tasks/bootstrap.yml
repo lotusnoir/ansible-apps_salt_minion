@@ -1,4 +1,11 @@
 ---
+- name: "Ensure salt wasnt installed by repo"
+  ansible.builtin.package:
+    name:
+      - salt-common
+      - salt-minion
+    state: absent
+
 - name: "BOOTSTRAP | Download last install script"
   ansible.builtin.get_url:
     url: "{{ salt_minion_bootstrap_url }}"
