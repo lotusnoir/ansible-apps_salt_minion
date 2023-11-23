@@ -3,6 +3,10 @@
   ansible.builtin.package:
     name: "{{ salt_minion_pkg_name }}"
     state: absent
+  register: pkg_result
+  retries: 12
+  delay: 10
+  until: pkg_result is success
 
 - name: "BOOTSTRAP | Download last install script"
   ansible.builtin.get_url:
