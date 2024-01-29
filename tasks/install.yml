@@ -69,3 +69,10 @@
       changed_when: false
       delegate_to: "{{ salt_master_ip }}"
       when: salt_master_update_keys|bool
+
+- name: "Ensure salt folder permission"
+  ansible.builtin.file:
+    path: "/opt/saltstack/salt/"
+    owner: "{{ salt_minion_owner }}"
+    group: "{{ salt_minion_group }}"
+    mode: '0755'
