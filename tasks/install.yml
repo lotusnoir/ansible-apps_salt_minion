@@ -43,14 +43,14 @@
         group: root
         state: link
         force: true
-      notify: restart salt-minion
+      notify: Restart salt-minion
 
     - name: "Configure minion"
       ansible.builtin.copy:
         dest: "/etc/salt/minion"
         content: "{{ salt_minion_config }}"
         mode: 0644
-      notify: restart salt-minion
+      notify: Restart salt-minion
       when: salt_minion_confighost|bool
 
     #- name: "Ask Salt-master to acept minion key"
