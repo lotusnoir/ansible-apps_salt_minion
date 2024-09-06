@@ -13,7 +13,7 @@
     url: "{{ salt_minion_bootstrap_url }}"
     dest: "/tmp/salt-minion_install.sh"
     timeout: 120
-    mode: 0755
+    mode: '0755'
 
 - name: "BOOTSTRAP | Run salt minion install script"
   ansible.builtin.command: "/tmp/salt-minion_install.sh -P stable {{ salt_minion_version }}"
