@@ -3,15 +3,21 @@
 - name: "DEBIAN | Install repo"
   when: ansible_os_family == 'Debian'
   block:
+    - name: "Ensure key directory exist"
+      ansible.builtin.file:
+        path: "/etc/apt/keyrings"
+        state: directory
+        mode: '0755'
+
     - name: "DEBIAN | Download gpg key"
       ansible.builtin.get_url:
-        url: "https://repo.saltproject.io/salt/py3/{{ ansible_distribution | lower }}/{{ salt_minion_repo_version }}/amd64/{{ salt_minion_repo_key }}"
-        dest: /usr/share/keyrings/salt-archive-keyring.gpg
+        url: "https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public"
+        dest: "/etc/apt/keyrings/salt-archive-keyring-2023.pgp"
         mode: '0644'
 
     - name: "DEBIAN | Create repo list"
       ansible.builtin.apt_repository:
-        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/salt-archive-keyring.gpg] https://repo.saltproject.io/salt/py3/{{ ansible_distribution | lower }}/{{ salt_minion_repo_version }}/amd64/latest {{ salt_minion_repo_dist }} main"
+        repo: "deb [signed-by=/etc/apt/keyrings/salt-archive-keyring-2023.pgp arch=amd64] https://packages.broadcom.com/artifactory/saltproject-deb/ stable main"
         state: present
         filename: salt
 
@@ -30,14 +36,14 @@
   block:
     - name: "REDHAT | Download gpg key"
       ansible.builtin.rpm_key:
-        key: "https://repo.saltproject.io/salt/py3/redhat/{{ ansible_distribution_major_version }}/x86_64/SALT-PROJECT-GPG-PUBKEY-2023.pub"
+        key: "https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public"
         state: present
 
     - name: "REDHAT | Add repository"
-      ansible.builtin.yum_repository:
-        name: salt
-        description: Salt repo
-        baseurl: "https://repo.saltproject.io/salt/py3/redhat/{{ ansible_distribution_major_version }}/x86_64/latest"
+      ansible.builtin.get_url:
+        url: "https://github.com/saltstack/salt-install-guide/releases/latest/download/salt.repo"
+        dest: "/etc/yum.repos.d/salt.repo"
+        mode: '0644'
 
     - name: "REDHAT | Install minion"
       ansible.builtin.yum:

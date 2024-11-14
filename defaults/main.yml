@@ -4,6 +4,8 @@ salt_minion_install_method: repo #bootstrap | repo | src (nopt working yet)
 salt_minion_force_install: false
 salt_minion_pkg_name: "salt-minion"
 # Used for boostrap and src. repo install latest
+# due to breaking changes https://saltproject.io/blog/salt-project-package-repo-migration-and-guidance/
+# older version than 3006.* can't be installed via bootstrap or repo, use src mode instead
 salt_minion_version: "3006.1"
 
 ## install src
