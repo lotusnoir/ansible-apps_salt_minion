@@ -7,13 +7,13 @@
       ansible.builtin.file:
         path: "/etc/apt/keyrings"
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: "DEBIAN | Download gpg key"
       ansible.builtin.get_url:
         url: "https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public"
         dest: "/etc/apt/keyrings/salt-archive-keyring-2023.pgp"
-        mode: '0644'
+        mode: "0644"
 
     - name: "DEBIAN | Create repo list"
       ansible.builtin.apt_repository:
@@ -43,10 +43,10 @@
       ansible.builtin.get_url:
         url: "https://github.com/saltstack/salt-install-guide/releases/latest/download/salt.repo"
         dest: "/etc/yum.repos.d/salt.repo"
-        mode: '0644'
+        mode: "0644"
 
     - name: "REDHAT | Install minion"
-      ansible.builtin.yum:
+      ansible.builtin.dnf:
         name: "{{ salt_minion_pkg_name }}"
         state: present
       register: pkg_result
