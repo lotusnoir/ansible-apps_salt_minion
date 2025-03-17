@@ -53,10 +53,10 @@
       notify: Restart salt-minion
       when: salt_minion_confighost|bool
 
-    #- name: "Ask Salt-master to acept minion key"
-    #  ansible.builtin.command: 'salt-call event.fire { "minion_id" : "nom_vm" } custom/salt/master/add-minion'
-    #  changed_when: false
-    #  when: salt_master_update_keys|bool
+    # - name: "Ask Salt-master to acept minion key"
+    #   ansible.builtin.command: 'salt-call event.fire { "minion_id" : "nom_vm" } custom/salt/master/add-minion'
+    #   changed_when: false
+    #   when: salt_master_update_keys|bool
 
     - name: "Start and enable salt minion"
       ansible.builtin.service:

@@ -12,12 +12,12 @@
     - name: "DEBIAN | Download gpg key"
       ansible.builtin.get_url:
         url: "https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public"
-        dest: "/etc/apt/keyrings/salt-archive-keyring-2023.pgp"
+        dest: "/etc/apt/keyrings/salt-archive-2023.pgp"
         mode: "0644"
 
     - name: "DEBIAN | Create repo list"
       ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/etc/apt/keyrings/salt-archive-keyring-2023.pgp arch=amd64] https://packages.broadcom.com/artifactory/saltproject-deb/ stable main"
+        repo: "deb [signed-by=/etc/apt/keyrings/salt-archive-2023.pgp arch=amd64] https://packages.broadcom.com/artifactory/saltproject-deb/ stable main"
         state: present
         filename: salt
 
