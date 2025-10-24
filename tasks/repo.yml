@@ -25,10 +25,10 @@
       ansible.builtin.apt:
         name: "{{ salt_minion_pkg_name }}"
         update_cache: true
-      register: pkg_result
+      register: __pkg_result
       retries: 12
       delay: 10
-      until: pkg_result is success
+      until: __pkg_result is success
 
 ### Redhat
 - name: "REDHAT | Install repo"
@@ -49,7 +49,7 @@
       ansible.builtin.dnf:
         name: "{{ salt_minion_pkg_name }}"
         state: present
-      register: pkg_result
+      register: __pkg_result
       retries: 12
       delay: 10
-      until: pkg_result is success
+      until: __pkg_result is success
