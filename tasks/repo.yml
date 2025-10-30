@@ -3,6 +3,11 @@
 - name: "DEBIAN | Install repo"
   when: ansible_os_family == 'Debian'
   block:
+    - name: "DEBIAN | Install gnupg"
+      ansible.builtin.package:
+        name: gnupg
+        state: present
+
     - name: "Ensure key directory exist"
       ansible.builtin.file:
         path: "/etc/apt/keyrings"
