@@ -39,6 +39,17 @@
 - name: "REDHAT | Install repo"
   when: ansible_os_family == 'RedHat'
   block:
+    - name: "Install requierements"
+      ansible.builtin.dnf:
+        name: ["gnupg2"]
+        state: present
+      become: true
+      register: __pkg_result
+      retries: 12
+      delay: 10
+      until: __pkg_result is success
+      when: ansible_distribution_major_version == '10'
+
     - name: "REDHAT | Download gpg key"
       ansible.builtin.rpm_key:
         key: "https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public"
