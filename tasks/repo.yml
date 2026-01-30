@@ -1,7 +1,7 @@
 ---
 ### Debian
 - name: "DEBIAN | Install repo"
-  when: ansible_os_family == 'Debian'
+  when: ansible_facts.os_family == 'Debian'
   block:
     - name: "DEBIAN | Install gnupg"
       ansible.builtin.package:
@@ -26,20 +26,11 @@
         state: present
         filename: salt
 
-    - name: "DEBIAN | Install minion"
-      ansible.builtin.apt:
-        name: "{{ salt_minion_pkg_name }}"
-        update_cache: true
-      register: __pkg_result
-      retries: 12
-      delay: 10
-      until: __pkg_result is success
-
 ### Redhat
 - name: "REDHAT | Install repo"
-  when: ansible_os_family == 'RedHat'
+  when: ansible_facts.os_family == 'RedHat'
   block:
-    - name: "Install requierements"
+    - name: "REDHAT 10+ | Install requierements"
       ansible.builtin.dnf:
         name: ["gnupg2"]
         state: present
@@ -48,24 +39,22 @@
       retries: 12
       delay: 10
       until: __pkg_result is success
-      when: ansible_distribution_major_version == '10'
+      when: (ansible_facts.distribution_major_version | int) >= 10
 
-    - name: "REDHAT | Download gpg key"
-      ansible.builtin.rpm_key:
-        key: "https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public"
-        state: present
+    - name: "REDHAT | Add SaltStack repository"
+      ansible.builtin.yum_repository:
+        name: salt
+        description: SaltStack repo
+        baseurl: https://packages.broadcom.com/artifactory/saltproject-rpm/
+        gpgcheck: true
+        gpgkey: https://packages.broadcom.com/artifactory/api/security/keypair/SaltProjectKey/public
+        enabled: true
 
-    - name: "REDHAT | Add repository"
-      ansible.builtin.get_url:
-        url: "https://github.com/saltstack/salt-install-guide/releases/latest/download/salt.repo"
-        dest: "/etc/yum.repos.d/salt.repo"
-        mode: "0644"
-
-    - name: "REDHAT | Install minion"
-      ansible.builtin.dnf:
-        name: "{{ salt_minion_pkg_name }}"
-        state: present
-      register: __pkg_result
-      retries: 12
-      delay: 10
-      until: __pkg_result is success
+- name: "REDHAT | Install minion"
+  ansible.builtin.package:
+    name: "{{ salt_minion_pkg_name }}"
+    state: present
+  register: __pkg_result
+  retries: 12
+  delay: 10
+  until: __pkg_result is success

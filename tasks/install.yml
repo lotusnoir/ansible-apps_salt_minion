@@ -14,9 +14,11 @@
 - name: "Import boostrap tasks"
   ansible.builtin.import_tasks: bootstrap.yml
   when:
-    - salt_minion_install_method == "bootstrap"
-    - salt_minion_force_install|bool or not minion_bin.stat.exists
-    - ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= '20' or ansible_distribution == 'Debian' or ansible_os_family == 'RedHat'
+    - salt_minion_install_method == 'bootstrap'
+    - salt_minion_force_install | bool or not minion_bin.stat.exists
+    - ansible_facts.os_family == 'RedHat'
+      or ansible_facts.distribution == 'Debian'
+      or (ansible_facts.distribution == 'Ubuntu' and (ansible_facts.distribution_major_version | int) >= 20)
 
 - name: "Import repo tasks"
   ansible.builtin.import_tasks: repo.yml
@@ -32,8 +34,10 @@
 
 - name: "Saltstack minion extra tasks"
   when:
-    - salt_minion_install_method == "bootstrap"
-    - (ansible_distribution == 'Ubuntu' and ansible_distribution_major_version >= '20') or ansible_distribution == 'Debian' or ansible_os_family == 'RedHat'
+    - salt_minion_install_method == 'bootstrap'
+    - ansible_facts.os_family == 'RedHat'
+      or ansible_facts.distribution == 'Debian'
+      or (ansible_facts.distribution == 'Ubuntu' and (ansible_facts.distribution_major_version | int) >= 20)
   block:
     - name: "Link minion_id to hostname"
       ansible.builtin.file:
